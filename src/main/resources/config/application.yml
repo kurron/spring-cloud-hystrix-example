@@ -1,0 +1,7 @@
+# We need this in a local file instead of the configuration server because Gradle needs to do templating
+info:
+    app:
+        name: ${name}
+        description: ${description}
+        version: ${version}
+        built-on: ${builtOn}

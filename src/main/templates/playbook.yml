@@ -1,0 +1,56 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: Adding destination host to in-memory inventory
+    add_host: hostname=destination_host
+              ansible_ssh_host={{ server }}
+              ansible_ssh_user={{ user }}
+              ansible_ssh_pass={{ password }}
+              ansible_sudo_pass={{ password }}
+
+- hosts: destination_host
+  become: no
+
+  vars:
+    container_name: "${projectName}"
+    host_name: "${projectName}"
+    docker_account: "${dockerAccount}"
+    registry: "${dockerRegistry}"
+    repository: "${projectName}"
+    image: "{{registry}}/{{ docker_account }}/{{ repository }}:{{ tag }}"
+    host_port: 0
+    container_port: 8080
+    ports: "{{ host_port }}:{{ container_port }}"
+    heap_size: 128m
+    mongodb_host: 10.0.2.15
+    mongodb_port: 27017
+    spring_profiles: default
+
+
+  tasks:
+    - name: Checking if the container exists -- any errors are ignored
+      shell: docker inspect --format=\\{\\{.State.Running\\}\\} {{ container_name }}
+      register: container_state
+      failed_when: container_state.rc != 0 and ( "No such image or container" not in container_state.stderr )
+
+    - name: Stopping the container
+      command: docker stop {{ container_name }}
+      when: container_state.stdout == "true"
+
+    - name: Removing the container
+      command: docker rm --force=true {{ container_name }}
+      when: container_state.stdout != ""
+
+    - name: Running the container
+      command: "docker run --detach=true
+                           --restart=always
+                           --publish={{ ports }}
+                           --name={{ container_name }}
+                           --hostname={{host_name}}
+                           --env=SPRING_PROFILES_ACTIVE={{ spring_profiles }}
+                           --env=JVM_HEAP_MAX={{ heap_size }}
+                           --env=SPRING_DATA_MONGODB_HOST={{ mongodb_host }}
+                           --env=SPRING_DATA_MONGODB_PORT={{ mongodb_port }}
+                           {{ image }}
+                           "

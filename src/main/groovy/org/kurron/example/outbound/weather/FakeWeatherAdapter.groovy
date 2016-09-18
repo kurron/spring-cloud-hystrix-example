@@ -23,16 +23,13 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
  **/
 class FakeWeatherAdapter implements WeatherPort {
 
-    FakeWeatherAdapter() {
-        'bob'
-    }
-
     @HystrixCommand( fallbackMethod = 'cachedConditions' )
     @Override
     String currentWeather( final String location ) {
         String weather = 'unknown'
         switch( location ) {
             case 'Boston' : weather = 'The weather in Boston is Sunny' ; break
+            case 'Buffalo' : throw new RuntimeException( 'Failing on purpose' ) ; break
             default : weather = "The locatioin of ${location} is not currently supported"
         }
         weather

@@ -30,6 +30,7 @@ import spock.lang.Specification
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
 class FakeWeatherAdapterIntegrationTest extends Specification {
 
+    // Since Spring is generating proxies for us, we have autowire by the interface or the bean won't be found for autowiring. The proxy type won't be FakeWeatherAdapter.
     @Autowired
     WeatherPort sut
 
@@ -42,5 +43,16 @@ class FakeWeatherAdapterIntegrationTest extends Specification {
 
         then: 'the city is part of the current conditions'
         weather.contains( city )
+    }
+
+    def 'fail a single time'() {
+        given: 'a city name'
+        def city = 'Buffalo'
+
+        when: 'the weather is asked for'
+        def weather = sut.currentWeather( city )
+
+        then: 'the cached results are used'
+        weather.contains( 'off-line' )
     }
 }

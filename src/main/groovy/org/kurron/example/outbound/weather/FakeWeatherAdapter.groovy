@@ -26,16 +26,18 @@ class FakeWeatherAdapter implements WeatherPort {
     @HystrixCommand( fallbackMethod = 'cachedConditions' )
     @Override
     String currentWeather( final String location ) {
-        String weather = 'unknown'
-        switch( location ) {
-            case 'Boston' : weather = 'The weather in Boston is Sunny' ; break
-            case 'Buffalo' : throw new RuntimeException( 'Failing on purpose' ) ; break
-            default : weather = "The locatioin of ${location} is not currently supported"
+        // ugly because of early return but works
+        if ( location == 'Boston' ) {
+            return 'The weather in Boston is Sunny'
         }
-        weather
+        else {
+            throw new RuntimeException( 'Failing on purpose' )
+        }
     }
 
+    // NOTE: signature of the fallback method must match the primary method or Hystrix gets cranky
+    @SuppressWarnings( 'GroovyUnusedDeclaration' )
     static String cachedConditions( String location ) {
-        "Weather service is currently off-line but the last known conditions for ${location} were: Sunny" as String
+        "Weather service is currently off-line but the last known conditions for ${location} were: Sunny"
     }
 }

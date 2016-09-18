@@ -16,6 +16,7 @@
 
 package org.kurron.example.outbound.weather
 
+import groovy.util.logging.Slf4j
 import org.kurron.example.Application
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.IntegrationTest
@@ -26,6 +27,7 @@ import spock.lang.Specification
 /**
  * Put the FakeWeatherAdapter through its paces.
  **/
+@Slf4j
 @IntegrationTest
 @ContextConfiguration( classes = Application, loader = SpringApplicationContextLoader )
 class FakeWeatherAdapterIntegrationTest extends Specification {
@@ -42,17 +44,19 @@ class FakeWeatherAdapterIntegrationTest extends Specification {
         def weather = sut.currentWeather( city )
 
         then: 'the city is part of the current conditions'
+        log.info( '{}', weather )
         weather.contains( city )
     }
 
-    def 'fail a single time'() {
+    def 'sad path'() {
         given: 'a city name'
-        def city = 'Buffalo'
+        def city = 'Miami'
 
         when: 'the weather is asked for'
         def weather = sut.currentWeather( city )
 
         then: 'the cached results are used'
+        log.info( '{}', weather )
         weather.contains( 'off-line' )
     }
 }

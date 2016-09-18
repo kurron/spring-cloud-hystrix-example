@@ -1,7 +1,43 @@
-# We need this in a local file instead of the configuration server because Gradle needs to do templating
-info:
-    app:
-        name: ${name}
-        description: ${description}
-        version: ${version}
-        built-on: ${builtOn}
+---
+spring:
+    main:
+        banner-mode: console
+    groovy:
+        template:
+            check-template-location: false
+    jackson:
+        serialization:
+            indent_output: true
+        serialization-inclusion: non_empty
+
+management:
+    contextPath: /operations
+    security:
+        enabled: false
+        role: admin
+        sessions: stateless
+
+endpoints:
+    health:
+        time-to-live: 1000
+        sensitive: false
+
+server:
+    contextPath: /
+    port: 8080
+    useForwardHeaders: true
+    tomcat:
+        portHeader: X-Forwarded-Port
+        protocolHeader: X-Forwarded-Protocol-Header
+        remoteIpHeader: X-Forwarded-Remote-IP-Header
+
+logging:
+  config: classpath:logback.xml
+
+security:
+  user:
+    name: operations
+    password: operations
+  basic:
+    enabled: false
+    realm: example

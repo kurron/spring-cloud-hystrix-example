@@ -23,14 +23,22 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
  **/
 class FakeWeatherAdapter implements WeatherPort {
 
-    @HystrixCommand( fallbackMethod = 'fallbackData' )
-    @Override
-    String currentWeather( final String location ) {
-        'foo'
+    FakeWeatherAdapter() {
+        'bob'
     }
 
-    @SuppressWarnings( "GroovyUnusedDeclaration" )
-    String fallbackData() {
-        'Weather service is currently off-line but the last known conditions were: Sunny'
+    @HystrixCommand( fallbackMethod = 'cachedConditions' )
+    @Override
+    String currentWeather( final String location ) {
+        String weather = 'unknown'
+        switch( location ) {
+            case 'Boston' : weather = 'The weather in Boston is Sunny' ; break
+            default : weather = "The locatioin of ${location} is not currently supported"
+        }
+        weather
+    }
+
+    static String cachedConditions( String location ) {
+        "Weather service is currently off-line but the last known conditions for ${location} were: Sunny" as String
     }
 }

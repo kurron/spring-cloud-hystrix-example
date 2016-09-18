@@ -14,6 +14,9 @@ TODO
 
 # Tips and Tricks
 
+## Circuit Breaker Example
+Run the `org.kurron.example.outbound.weather.FakeWeatherAdapterIntegrationTest` from IntelliJ and see how the breaker behaves.
+
 # Troubleshooting
 
 TODO

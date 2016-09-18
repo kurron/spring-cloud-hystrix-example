@@ -59,4 +59,6 @@ class FakeWeatherAdapterIntegrationTest extends Specification {
         log.info( '{}', weather )
         weather.contains( 'off-line' )
     }
+
+    // TODO: put in tests that showcase the breaker transitioning between closed, open, half-open and closed states
 }

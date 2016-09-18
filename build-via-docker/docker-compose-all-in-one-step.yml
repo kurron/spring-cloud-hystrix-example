@@ -19,7 +19,7 @@ services:
         command: "true"
         volumes:
         - /gradle-cache
-        - /fake-home
+        - /weather-home
     all-in-one-step:
 #       image: kurron/docker-docker-compose:1.7.0
         image: kurron/docker-oracle-jdk-8:1.8.0_101
@@ -40,10 +40,10 @@ services:
         - SPRING_RABBITMQ_HOST=rabbitmq
         - LANG=en_US.UTF-8
         - LANGUAGE=en_US
-        - HOME=/fake-home
+        - HOME=/weather-home
         - COMPOSE_HTTP_TIMEOUT=90
         - COMPOSE_PROJECT_NAME=build-test
         privileged: false
         hostname: testing
         domainname: example.com
-        command: ./gradlew  --project-prop runIntegrationTests=true --project-prop publishArtifacts=true --project-prop branch=master --project-prop buildDir=/fake-home/build --project-dir=/code --console=plain --no-daemon --no-search-upward --gradle-user-home=/fake-home --project-cache-dir=/gradle-cache --stacktrace
+        command: ./gradlew  --project-prop runIntegrationTests=true --project-prop publishArtifacts=true --project-prop branch=master --project-prop buildDir=/weather-home/build --project-dir=/code --console=plain --no-daemon --no-search-upward --gradle-user-home=/weather-home --project-cache-dir=/gradle-cache --stacktrace
